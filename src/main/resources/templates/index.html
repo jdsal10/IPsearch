@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+   <head>
+       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+       <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+       <title>Client IP Address</title>
+       <style>
+           body {
+               background-color: #f9f9f9;
+               text-align: center;
+           }
+           .container{
+               width: 550px;
+               margin: 0 auto;
+               padding: 20px;
+               background-color: #fff;
+               border: 1px solid #ddd;
+               border-radius: 10px;
+               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+               text-align: left;
+               font-family: Arial, sans-serif;
+           }
+           #title {
+               color: #3C3B6E;
+               font-family: 'Open Sans', sans-serif;
+               letter-spacing: -0.075rem;
+               width: 100%;
+               font-size: 2.5em;
+               line-height: 1.125;
+               font-weight: 700;
+               text-align: center;
+               margin-top: 0.1em;
+           }
+
+           #title a {
+               text-decoration: underline;
+           }
+
+           #title a:hover {
+               text-decoration: none;
+           }
+           #title span{
+               margin-right: -0.2em;
+               margin-left: -0.2em;
+           }
+           .searchBox{
+               margin-top: 2em;
+               margin-bottom: 2em;
+           }
+           .searchBox h2{
+               font-size: 20px;
+           }
+           .g-recaptcha{
+               margin-top: 5px;
+           }
+
+       </style>
+   </head>
+   <body>
+   <div class="container" >
+       <h1 id="title">Internet
+       <strong>
+           <span style="color: #B22234">2</span>
+       </strong>
+       .ai
+       </h1>
+       <p>Your IP Address is <span th:text="${clientIPAddress}" id = "SearchedIP"></span></p>
+<!--       <p>IP Address matched: <span th:text="${Found} ? 'Yes' : 'No'"></span></p>-->
+       <p th:each="result : ${InRange}">It belongs to the Autonomous System Number:  <span th:text="${result.ASNUMBER}" id = "ASNUMBER"></span></p>
+       <p th:each="result : ${InRange}">Which is managed by: <span th:text="${result.NAME}" id = "NAME"></span> </p>
+       <p th:each="result : ${InRange}"yy>According to our records, the rating we have assigned to this AS is: <span th:text="${result.rating}" id="rating"></span> </p>
+
+<!--This is the searchbox, when you submit something it calls searchingIP-->
+       <div class="searchBox"  align="center">
+           <h2>Search for an IP address </h2>
+           <form action="/searchingIP" method="post" onsubmit="return searchingIP()">
+               <label for="inputIP3">Enter an IP address: </label>
+               <input type="text" id="inputIP3">
+               <button type="submit">Search</button>
+
+<!--               <div class="g-recaptcha col-sm-5"-->
+<!--                    th:attr="data-sitekey=${@captchaSettings.getSite()}"></div>-->
+<!--               <span id="captchaError" class="alert alert-danger col-sm-4"-->
+<!--                     style="display:none"></span>-->
+               <div class="g-recaptcha" th:data-sitekey="${@environment.getProperty('recaptcha.key')}"></div>
+           </form>
+
+
+           <hr style="margin-top: 19px">
+
+       </div>
+
+   </div>
+
+           <script>
+               function searchingIP(){
+                   event.preventDefault();
+                   if(grecaptcha.getResponse()){
+                       var inputIP3 = $('#inputIP3').val();
+                       $.ajax({
+                           type: "POST",
+                           url: "/searchingIP",
+                           dataType: "json",
+                           data:{
+                               inputIP3 : inputIP3,
+                               "g-recaptcha-response": grecaptcha.getResponse()
+
+                           },
+                           success: function (response){
+                               console.log(response);
+                               // console.log(JSON.stringify(captcha))
+                               // var  finalResponse = JSON.stringify(response);
+                               // var obj = JSON.parse(finalResponse);
+
+                               //JQuery
+                               // $("#searchResultContainer").html("<b>Your response is : "+ finalResponse + "</b>");
+                               if(response.hasOwnProperty("error")){
+                                   alert("Please enter a valid IP Address");
+                               }
+
+                               $("#SearchedIP").text(response.SearchedIP);
+                               $("#ASNUMBER").text(response.ASNUMBER);
+                               $("#ASNAME").text(response.ASNAME);
+                               $("#NAME").text(response.NAME);
+                               $("#rating").text(response.rating);
+
+                               grecaptcha.reset();
+                           },
+                           error: function (){
+                               console.error("Search could not be done")
+                           }
+                       });
+                   }else {
+                       alert("Please complete recaptcha")
+                   }
+
+
+               }
+           </script>
+
+   </body>
+</html>

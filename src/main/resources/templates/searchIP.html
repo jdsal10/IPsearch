@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        .error-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-icon {
+            font-size: 48px;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #d9534f;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            border-bottom: 1px solid #007bff;
+            padding-bottom: 2px;
+            margin-top: 20px;
+        }
+
+        .back-link:hover {
+            color: #0056b3;
+            border-bottom-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <div class="error-icon">🚫</div>
+    <h1>Error: Access Denied</h1>
+    <p>Your IP address is not authorized to access this page.</p>
+    <!-- Add more informative error message if needed -->
+    <a class="back-link" href="/">Go back to home page</a>
+</div>
+</body>
+</html>
